@@ -1,12 +1,22 @@
 const express = require("express");
-const Joi = require("joi");
+const mongoose = require("mongoose");
 const app = express();
 const movies = require("./routes/movies");
+const customers = require("./routes/customers");
 const home = require("./routes/home");
+
+mongoose
+  .connect("mongodb://localhost/vidly", {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+  })
+  .then(() => console.log("Connect to MongoDB..."))
+  .catch((err) => console.error("Could not connect to MongoDB..."));
 
 app.use(express.json());
 
 app.use("/api/movies", movies);
+app.use("/api/customers", customers);
 app.use("/", home);
 
 const PORT = process.env.PORT || 3000;
