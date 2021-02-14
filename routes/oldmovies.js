@@ -1,20 +1,17 @@
 const express = require("express");
 const router = express.Router();
 
-const movies = [
+const genres = [
   {
     id: 1,
-    name: "movie1",
     genre: "action",
   },
   {
     id: 2,
-    name: "movie2",
     genre: "romance",
   },
   {
     id: 3,
-    name: "movie3",
     genre: "horror",
   },
 ];
@@ -22,11 +19,11 @@ const movies = [
 //GET
 
 router.get("/", (req, res) => {
-  res.send(movies);
+  res.send(genres);
 });
 
 router.get("/api/genres", (req, res) => {
-  const genres = movies.map((item) => {
+  const genres = genres.map((item) => {
     return item["genre"];
   });
 
@@ -35,27 +32,26 @@ router.get("/api/genres", (req, res) => {
 
 router.get("/api/genres/:genre", (req, res) => {
   const selectGenre = req.params.genre;
-  const newMovies = movies.find((item) => {
+  const newGenre = genres.find((item) => {
     return item["genre"] === selectGenre;
   });
-  res.send(newMovies);
+  res.send(newGenre);
 });
 
 router.get("/:id", (req, res) => {
-  const newMovies = movies.find((c) => {
+  const newGenres = genres.find((c) => {
     return c.id === parseInt(req.params.id);
   });
 
-  if (!newMovies) {
-    return res.status(404).send("The movie with the given id does not exist");
+  if (!newGenres) {
+    return res.status(404).send("The genre with the given id does not exist");
   }
-  res.send(newMovies);
+  res.send(newGenres);
 });
 
 //POST
 router.post("/", (req, res) => {
   const schema = Joi.object({
-    name: Joi.string().min(3).required(),
     genre: Joi.string().min(3).required(),
   });
 
@@ -67,28 +63,26 @@ router.post("/", (req, res) => {
       .send("Name and Genre are required or must be 3 characters long");
   } else {
     const newId = movies.length + 1;
-    const newMovie = {
+    const newGenre = {
       id: newId,
-      name: req.body.name,
       genre: req.body.genre,
     };
-    movies.push(newMovie);
-    res.send(newMovie);
+    genres.push(newGenre);
+    res.send(newGenre);
   }
 });
 
 router.put("/:id", (req, res) => {
-  const movie = movies.find((item) => {
+  const newGenre = genres.find((item) => {
     return item.id === parseInt(req.params.id);
   });
 
-  if (!movie) {
-    return res.status(404).send("The movie with the given id does not exist");
+  if (!newGenre) {
+    return res.status(404).send("The genre with the given id does not exist");
   }
 
   const schema = Joi.object({
-    name: Joi.string().min(3).required(),
-    genre: Joi.string().min(3).required(),
+    newGenre: Joi.string().min(3).required(),
   });
 
   result = schema.validate(req.body);
@@ -96,25 +90,24 @@ router.put("/:id", (req, res) => {
   if (result.error) {
     return res
       .status(404)
-      .send("Name and Genre are required or must be 3 characters long");
+      .send("Genre are required or must be 3 characters long");
   } else {
-    movie.name = req.body.name;
-    movie.genre = req.body.genre;
-    res.send(movie);
+    newGenre.genre = req.body.genre;
+    res.send(newGenre);
   }
 });
 
 router.delete("/:id", (req, res) => {
-  const movie = movies.find((item) => {
+  const genre = genres.find((item) => {
     return item.id === parseInt(req.params.id);
   });
 
-  if (!movie) {
-    return res.status(404).send("The movie with the given id does not exist");
+  if (!genre) {
+    return res.status(404).send("The genre with the given id does not exist");
   }
-  const index = movies.indexOf(movie);
-  movies.splice(index, 1);
-  res.send(movie);
+  const index = genres.indexOf(movie);
+  genres.splice(index, 1);
+  res.send(genre);
 });
 
 // module.exports = router;
